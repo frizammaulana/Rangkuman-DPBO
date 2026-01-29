@@ -814,32 +814,468 @@ if (animal instanceof Dog) {
 
 ### 12. Package
 
-#### Membuat Package
-```java
-// File: hargapulsa/HargaPulsa.java
-package hargapulsa;
+#### Apa itu Package?
+Package adalah cara untuk mengelompokkan class-class yang berkaitan dalam satu folder/direktori. Package membantu:
+- **Menghindari konflik nama** class yang sama
+- **Mengorganisir** project yang besar
+- **Kontrol akses** dengan access modifier
+- **Memudahkan maintenance** code
 
-public class HargaPulsa {
-    public void info() {
-        System.out.println("Harga Pulsa Info");
+#### Struktur Penamaan Package
+```
+Konvensi: huruf kecil semua, biasanya reverse domain
+Contoh:
+- com.telkom.dpbo
+- org.apache.commons
+- id.ac.telkomuniversity.project
+```
+
+#### Cara Membuat Package yang Benar
+
+**Langkah 1: Buat Struktur Folder**
+```
+MyProject/
+├── src/
+│   ├── main/
+│   │   └── Main.java
+│   ├── model/
+│   │   ├── Mahasiswa.java
+│   │   └── Dosen.java
+│   ├── controller/
+│   │   └── MahasiswaController.java
+│   └── util/
+│       └── Helper.java
+```
+
+**Langkah 2: Deklarasikan Package di Setiap File**
+
+```java
+// File: src/model/Mahasiswa.java
+package model;  // ← HARUS baris pertama (sebelum import)
+
+public class Mahasiswa {
+    private String nama;
+    private String nim;
+    
+    public Mahasiswa(String nama, String nim) {
+        this.nama = nama;
+        this.nim = nim;
+    }
+    
+    public String getNama() { return nama; }
+    public String getNim() { return nim; }
+}
+```
+
+```java
+// File: src/model/Dosen.java
+package model;
+
+public class Dosen {
+    private String nama;
+    private String nip;
+    
+    public Dosen(String nama, String nip) {
+        this.nama = nama;
+        this.nip = nip;
+    }
+    
+    public String getNama() { return nama; }
+    public String getNip() { return nip; }
+}
+```
+
+```java
+// File: src/controller/MahasiswaController.java
+package controller;
+
+import model.Mahasiswa;  // ← Import class dari package lain
+
+public class MahasiswaController {
+    public void tampilkanMahasiswa(Mahasiswa mhs) {
+        System.out.println("Nama: " + mhs.getNama());
+        System.out.println("NIM: " + mhs.getNim());
     }
 }
 ```
 
-#### Menggunakan Package
 ```java
-// Import specific class
-import hargapulsa.HargaPulsa;
+// File: src/main/Main.java
+package main;
 
-// Import semua class di package
-import hargapulsa.*;
+import model.Mahasiswa;
+import model.Dosen;
+import controller.MahasiswaController;
 
 public class Main {
     public static void main(String[] args) {
-        HargaPulsa hp = new HargaPulsa();
-        hp.info();
+        // Membuat objek
+        Mahasiswa mhs = new Mahasiswa("Budi", "12345");
+        Dosen dsn = new Dosen("Dr. Ali", "19870001");
+        
+        // Menggunakan controller
+        MahasiswaController ctrl = new MahasiswaController();
+        ctrl.tampilkanMahasiswa(mhs);
     }
 }
+```
+
+#### Cara Import Package
+
+**1. Import Specific Class (Recommended)**
+```java
+import model.Mahasiswa;
+import model.Dosen;
+```
+
+**2. Import Semua Class di Package**
+```java
+import model.*;  // import semua class di package model
+```
+
+**3. Import Nested Package**
+```java
+import com.telkom.dpbo.model.Mahasiswa;
+import com.telkom.dpbo.util.*;
+```
+
+**4. Fully Qualified Name (Tanpa Import)**
+```java
+public class Main {
+    public static void main(String[] args) {
+        // Tanpa import, tulis full path
+        model.Mahasiswa mhs = new model.Mahasiswa("Budi", "12345");
+        controller.MahasiswaController ctrl = new controller.MahasiswaController();
+    }
+}
+```
+
+#### Package dengan Sub-package
+
+```
+MyProject/
+├── src/
+│   └── com/
+│       └── telkom/
+│           └── dpbo/
+│               ├── Main.java
+│               ├── model/
+│               │   ├── student/
+│               │   │   └── Mahasiswa.java
+│               │   └── lecturer/
+│               │       └── Dosen.java
+│               └── util/
+│                   └── Helper.java
+```
+
+```java
+// File: com/telkom/dpbo/model/student/Mahasiswa.java
+package com.telkom.dpbo.model.student;
+
+public class Mahasiswa {
+    private String nama;
+    // ...
+}
+```
+
+```java
+// File: com/telkom/dpbo/Main.java
+package com.telkom.dpbo;
+
+import com.telkom.dpbo.model.student.Mahasiswa;
+import com.telkom.dpbo.model.lecturer.Dosen;
+
+public class Main {
+    // ...
+}
+```
+
+#### Compile & Run Program dengan Package
+
+**Di Command Line / Terminal:**
+
+```bash
+# Struktur folder:
+# MyProject/
+# └── src/
+#     ├── main/Main.java
+#     ├── model/Mahasiswa.java
+#     └── controller/MahasiswaController.java
+
+# 1. Masuk ke folder project
+cd MyProject/src
+
+# 2. Compile semua file (dari folder src)
+javac main/Main.java model/*.java controller/*.java
+
+# Atau compile sekaligus:
+javac main/Main.java
+
+# 3. Run program (dari folder src, tanpa ekstensi .java)
+java main.Main
+```
+
+**Untuk Sub-package:**
+```bash
+# Compile
+javac com/telkom/dpbo/Main.java
+
+# Run
+java com.telkom.dpbo.Main
+```
+
+#### Di NetBeans / IDE
+
+**Cara Membuat Package di NetBeans:**
+
+1. **Klik kanan pada Source Packages** → New → Java Package
+2. **Isi Package Name**: misalnya `model`, `controller`, `view`
+3. **Klik Finish**
+4. **Klik kanan pada package** → New → Java Class
+5. **Buat class** di dalam package tersebut
+
+```
+NetBeans akan otomatis:
+- Membuat folder sesuai nama package
+- Menambahkan "package namapackage;" di baris pertama
+- Mengatur classpath dengan benar
+```
+
+#### Contoh Project Lengkap dengan Package
+
+```
+TokoOnline/
+├── src/
+│   ├── main/
+│   │   └── Main.java
+│   ├── model/
+│   │   ├── Product.java
+│   │   ├── Customer.java
+│   │   └── Order.java
+│   ├── service/
+│   │   ├── ProductService.java
+│   │   └── OrderService.java
+│   └── util/
+│       ├── Validator.java
+│       └── Formatter.java
+```
+
+**Product.java**
+```java
+package model;
+
+public class Product {
+    private String id;
+    private String name;
+    private double price;
+    
+    public Product(String id, String name, double price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+    
+    // Getter & Setter
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public double getPrice() { return price; }
+}
+```
+
+**ProductService.java**
+```java
+package service;
+
+import model.Product;
+import java.util.ArrayList;
+
+public class ProductService {
+    private ArrayList<Product> products = new ArrayList<>();
+    
+    public void addProduct(Product product) {
+        products.add(product);
+    }
+    
+    public void displayProducts() {
+        for (Product p : products) {
+            System.out.println(p.getName() + ": Rp" + p.getPrice());
+        }
+    }
+}
+```
+
+**Validator.java**
+```java
+package util;
+
+public class Validator {
+    public static boolean isValidEmail(String email) {
+        return email.contains("@");
+    }
+    
+    public static boolean isValidPrice(double price) {
+        return price > 0;
+    }
+}
+```
+
+**Main.java**
+```java
+package main;
+
+import model.Product;
+import service.ProductService;
+import util.Validator;
+
+public class Main {
+    public static void main(String[] args) {
+        // Membuat service
+        ProductService ps = new ProductService();
+        
+        // Membuat produk
+        Product p1 = new Product("P001", "Laptop", 5000000);
+        Product p2 = new Product("P002", "Mouse", 50000);
+        
+        // Validasi harga
+        if (Validator.isValidPrice(p1.getPrice())) {
+            ps.addProduct(p1);
+        }
+        if (Validator.isValidPrice(p2.getPrice())) {
+            ps.addProduct(p2);
+        }
+        
+        // Tampilkan produk
+        ps.displayProducts();
+    }
+}
+```
+
+#### Access Modifier dalam Package
+
+```java
+// File: model/Mahasiswa.java
+package model;
+
+public class Mahasiswa {
+    public String nama;        // ✅ Accessible dari mana saja
+    protected String nim;      // ✅ Accessible di package & subclass
+    String alamat;             // ✅ Accessible hanya di package yang sama
+    private double ipk;        // ❌ Hanya accessible di class ini
+    
+    public void methodPublic() { }      // ✅ Dari mana saja
+    protected void methodProtected() { } // ✅ Package & subclass
+    void methodDefault() { }             // ✅ Hanya package yang sama
+    private void methodPrivate() { }     // ❌ Hanya class ini
+}
+```
+
+```java
+// File: controller/MahasiswaController.java
+package controller;
+
+import model.Mahasiswa;
+
+public class MahasiswaController {
+    public void test() {
+        Mahasiswa mhs = new Mahasiswa();
+        
+        mhs.nama = "Budi";      // ✅ OK (public)
+        mhs.nim = "12345";      // ❌ ERROR (protected, beda package)
+        mhs.alamat = "Jakarta"; // ❌ ERROR (default, beda package)
+        // mhs.ipk = 3.5;       // ❌ ERROR (private)
+        
+        mhs.methodPublic();     // ✅ OK
+        // mhs.methodProtected(); // ❌ ERROR (beda package)
+        // mhs.methodDefault();   // ❌ ERROR (beda package)
+        // mhs.methodPrivate();   // ❌ ERROR (private)
+    }
+}
+```
+
+#### Package Built-in Java yang Sering Dipakai
+
+```java
+// Otomatis di-import (tidak perlu import)
+java.lang.*  // String, Math, System, Integer, dll
+
+// Perlu import
+import java.util.*;           // ArrayList, HashMap, Scanner
+import java.io.*;             // File, BufferedReader, FileWriter
+import java.text.*;           // SimpleDateFormat, NumberFormat
+import java.sql.*;            // Connection, Statement, ResultSet
+import javax.swing.*;         // JFrame, JButton, JPanel (GUI)
+```
+
+#### Contoh Penggunaan Package Built-in
+
+```java
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Example {
+    public static void main(String[] args) {
+        // java.util.ArrayList
+        ArrayList<String> list = new ArrayList<>();
+        list.add("Item 1");
+        
+        // java.util.Scanner
+        Scanner input = new Scanner(System.in);
+        String text = input.nextLine();
+        
+        // java.text.SimpleDateFormat & java.util.Date
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        String tanggal = sdf.format(new Date());
+        
+        System.out.println(tanggal);
+    }
+}
+```
+
+#### Tips & Best Practices
+
+✅ **DO:**
+- Gunakan nama package yang deskriptif (model, controller, view, util)
+- Selalu tulis package di baris pertama file
+- Gunakan huruf kecil untuk nama package
+- Organisir class berdasarkan fungsinya
+
+❌ **DON'T:**
+- Jangan gunakan nama package yang bertabrakan dengan built-in (java, javax)
+- Jangan taruh banyak class tidak related dalam 1 package
+- Jangan lupa deklarasi package di setiap file
+
+#### Troubleshooting Package
+
+**Error: package does not exist**
+```
+Penyebab: 
+- File tidak ada di folder yang sesuai
+- Salah nama package
+- Tidak compile file yang di-import terlebih dahulu
+
+Solusi:
+- Pastikan struktur folder = nama package
+- Cek typo di nama package
+- Compile semua file yang terkait
+```
+
+**Error: class is not public in package**
+```
+Penyebab: Class yang di-import tidak public
+
+Solusi:
+- Pastikan class dideklarasi dengan "public class NamaClass"
+```
+
+**Error: cannot find symbol**
+```
+Penyebab: Lupa import atau salah nama class
+
+Solusi:
+- Tambahkan import statement
+- Cek nama class sudah benar
 ```
 
 ### 13. Object Class Methods
