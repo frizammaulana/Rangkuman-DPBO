@@ -276,7 +276,728 @@ input.close();
 ~ package      → dalam package yang sama
 ```
 
-### 3. Relasi Antar Class
+### 2.1 CARA MENGGAMBAR CLASS DIAGRAM YANG BENAR
+
+#### Langkah-langkah Menggambar Class Diagram:
+
+**STEP 1: Identifikasi Entitas/Class**
+```
+Cari kata benda (noun) dalam studi kasus
+Contoh: Mahasiswa, Dosen, Matakuliah, Buku, Perpustakaan
+```
+
+**STEP 2: Tentukan Atribut**
+```
+Cari properti dari setiap class
+Contoh class Mahasiswa:
+- nim (String)
+- nama (String)
+- tanggalLahir (Date)
+- ipk (double)
+```
+
+**STEP 3: Tentukan Method**
+```
+Cari aksi/behavior yang bisa dilakukan
+Contoh class Mahasiswa:
+- daftar()
+- ambilMatakuliah()
+- hitungIPK()
+- tampilkanInfo()
+```
+
+**STEP 4: Tentukan Relasi**
+```
+Cari hubungan antar class:
+- Association (punya/has)
+- Inheritance (adalah/is-a)
+- Aggregation (bagian dari - weak)
+- Composition (terdiri dari - strong)
+- Dependency (menggunakan)
+```
+
+**STEP 5: Tentukan Multiplicity**
+```
+Berapa banyak objek yang terlibat:
+1, 0..1, 1..*, 0..*, *, 2..5
+```
+
+#### Contoh Lengkap Class Diagram Mahasiswa:
+
+```
+┌─────────────────────────────────┐
+│         Mahasiswa               │
+├─────────────────────────────────┤
+│ - nim: String                   │
+│ - nama: String                  │
+│ - tanggalLahir: Date            │
+│ - alamat: String                │
+│ - ipk: double                   │
+├─────────────────────────────────┤
+│ + Mahasiswa(nim, nama)          │  ← Constructor
+│ + setNim(nim: String): void     │
+│ + getNim(): String              │
+│ + setNama(nama: String): void   │
+│ + getNama(): String             │
+│ + hitungIPK(): double           │
+│ + tampilInfo(): void            │
+└─────────────────────────────────┘
+```
+
+#### Detail Penulisan Method dalam Class Diagram:
+
+```
+Format Method:
+[visibility] namaMethod(parameter: tipe): returnType
+
+Contoh:
++ hitungLuas(): double
++ setNama(nama: String): void
++ getNilai(matkul: String): int
+- validateData(data: String): boolean
+# calculateBonus(gaji: double): double
+
+Constructor (nama sama dengan class):
++ Mahasiswa()
++ Mahasiswa(nim: String, nama: String)
+
+Static method (underline):
++ getTotalMahasiswa(): int
+  ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲ ̲
+```
+
+#### Cara Menggambar Berbagai Jenis Class:
+
+**1. Class Biasa**
+```
+┌──────────────────┐
+│   Mahasiswa      │
+├──────────────────┤
+│ - nim: String    │
+├──────────────────┤
+│ + getNim()       │
+└──────────────────┘
+```
+
+**2. Abstract Class**
+```
+┌──────────────────────┐
+│   <<abstract>>       │
+│   Kendaraan          │  atau tulis nama class italic
+├──────────────────────┤
+│ # merk: String       │
+├──────────────────────┤
+│ + bergerak()         │  ← abstract method (italic)
+│ + berhenti()         │
+└──────────────────────┘
+```
+
+**3. Interface**
+```
+┌──────────────────────┐
+│   <<interface>>      │
+│   Drawable           │
+├──────────────────────┤
+│                      │  ← biasanya kosong (no attributes)
+├──────────────────────┤
+│ + draw(): void       │
+│ + resize(): void     │
+└──────────────────────┘
+```
+
+**4. Enum**
+```
+┌──────────────────────┐
+│     <<enum>>         │
+│   StatusMahasiswa    │
+├──────────────────────┤
+│ AKTIF                │
+│ CUTI                 │
+│ LULUS                │
+│ DROP_OUT             │
+└──────────────────────┘
+```
+
+### 2.2 CARA TRANSLATE STUDY CASE KE CLASS DIAGRAM
+
+#### 🎯 STUDY CASE 1: Sistem Perpustakaan
+
+**📝 Study Case:**
+```
+Sebuah perpustakaan memiliki banyak buku. Setiap buku memiliki 
+judul, pengarang, ISBN, dan tahun terbit. Perpustakaan juga 
+memiliki anggota. Setiap anggota memiliki ID anggota, nama, 
+alamat, dan nomor telepon. Seorang anggota dapat meminjam 
+beberapa buku. Setiap peminjaman dicatat dengan tanggal pinjam 
+dan tanggal kembali.
+```
+
+**🔍 STEP 1: Identifikasi Class (kata benda)**
+```
+Class yang ditemukan:
+1. Perpustakaan
+2. Buku
+3. Anggota
+4. Peminjaman
+```
+
+**🔍 STEP 2: Identifikasi Atribut**
+```
+Buku:
+- judul (String)
+- pengarang (String)
+- isbn (String)
+- tahunTerbit (int)
+
+Anggota:
+- idAnggota (String)
+- nama (String)
+- alamat (String)
+- noTelepon (String)
+
+Peminjaman:
+- tanggalPinjam (Date)
+- tanggalKembali (Date)
+- status (String)
+```
+
+**🔍 STEP 3: Identifikasi Method**
+```
+Buku:
++ getJudul(): String
++ getPengarang(): String
++ tampilInfo(): void
+
+Anggota:
++ pinjamBuku(buku: Buku): void
++ kembalikanBuku(buku: Buku): void
++ tampilInfo(): void
+
+Peminjaman:
++ hitungDenda(): double
++ perpanjang(): void
+```
+
+**🔍 STEP 4: Identifikasi Relasi**
+```
+- Perpustakaan HAS-MANY Buku (Aggregation 1 → 0..*)
+- Perpustakaan HAS-MANY Anggota (Aggregation 1 → 0..*)
+- Anggota MELAKUKAN-MANY Peminjaman (Association 1 → 0..*)
+- Peminjaman UNTUK Buku (Association * → 1)
+```
+
+**✅ HASIL CLASS DIAGRAM:**
+```
+┌──────────────────┐
+│  Perpustakaan    │
+├──────────────────┤
+│ - nama: String   │
+│ - alamat: String │
+├──────────────────┤
+│ + tambahBuku()   │
+│ + tambahAnggota()│
+└────────┬─────────┘
+         │ 1
+         │ has
+         │
+    ┌────┴───┐
+    │        │
+    │ 0..*   │ 0..*
+    ▽        ▽
+┌────────┐  ┌────────────┐
+│  Buku  │  │  Anggota   │
+├────────┤  ├────────────┤
+│-judul  │  │-idAnggota  │
+│-isbn   │  │-nama       │
+├────────┤  ├────────────┤
+│+getInfo│  │+pinjamBuku │
+└───┬────┘  └─────┬──────┘
+    │             │
+    │ 1           │ 1
+    │             │
+    │   ┌─────────┴──────┐
+    │   │  Peminjaman    │
+    └───┤ ───────────────┤
+      * │-tanggalPinjam  │
+        │-tanggalKembali │
+        ├────────────────┤
+        │+hitungDenda()  │
+        └────────────────┘
+```
+
+#### 🎯 STUDY CASE 2: Sistem Akademik
+
+**📝 Study Case:**
+```
+Universitas memiliki dosen dan mahasiswa. Dosen mengajar 
+mata kuliah, mahasiswa mengambil mata kuliah. Setiap orang 
+(dosen dan mahasiswa) memiliki nama, NIK, dan tanggal lahir. 
+Dosen memiliki NIP dan gelar, sedangkan mahasiswa memiliki 
+NIM dan IPK. Mata kuliah memiliki kode, nama, dan SKS.
+```
+
+**🔍 Analisis:**
+```
+Class:
+1. Person (superclass) ← dosen dan mahasiswa = orang
+2. Dosen (extends Person)
+3. Mahasiswa (extends Person)
+4. MataKuliah
+
+Relasi:
+- Dosen IS-A Person (Inheritance)
+- Mahasiswa IS-A Person (Inheritance)
+- Dosen MENGAJAR MataKuliah (Association 1 → 1..*)
+- Mahasiswa MENGAMBIL MataKuliah (Association * → *)
+```
+
+**✅ HASIL CLASS DIAGRAM:**
+```
+         ┌─────────────────┐
+         │     Person      │ ← Superclass
+         ├─────────────────┤
+         │ - nama: String  │
+         │ - nik: String   │
+         │ - tglLahir: Date│
+         ├─────────────────┤
+         │ + getNama()     │
+         └────────△────────┘
+                  │
+         ┌────────┴────────┐
+         │ extends         │ extends
+         │                 │
+ ┌───────┴────────┐  ┌────┴──────────┐
+ │     Dosen      │  │   Mahasiswa   │
+ ├────────────────┤  ├───────────────┤
+ │ - nip: String  │  │ - nim: String │
+ │ - gelar: String│  │ - ipk: double │
+ ├────────────────┤  ├───────────────┤
+ │ + mengajar()   │  │ + daftar()    │
+ └────────┬───────┘  └───────┬───────┘
+          │                  │
+          │ 1                │ *
+          │ mengajar   ambil │
+          │                  │
+          │      ┌───────────┴────┐
+          │      │  MataKuliah    │
+          └──────┤ ───────────────┤
+             1..*│ - kode: String │
+                 │ - nama: String │
+                 │ - sks: int     │
+                 ├────────────────┤
+                 │ + getInfo()    │
+                 └────────────────┘
+```
+
+#### 🎯 STUDY CASE 3: Sistem E-Commerce
+
+**📝 Study Case:**
+```
+Sebuah toko online menjual produk. Produk dapat berupa 
+Elektronik atau Pakaian. Setiap produk punya nama, harga, 
+dan stok. Elektronik punya garansi, Pakaian punya ukuran. 
+Customer dapat membuat pesanan yang berisi beberapa produk. 
+Setiap pesanan punya status dan total harga.
+```
+
+**🔍 Analisis:**
+```
+Class:
+1. Produk (abstract/parent)
+2. Elektronik (extends Produk)
+3. Pakaian (extends Produk)
+4. Customer
+5. Pesanan
+6. ItemPesanan (class penghubung)
+
+Relasi:
+- Elektronik IS-A Produk
+- Pakaian IS-A Produk
+- Customer HAS-MANY Pesanan (1 → 0..*)
+- Pesanan HAS-MANY ItemPesanan (1 → 1..*)
+- ItemPesanan FOR Produk (* → 1)
+```
+
+**✅ HASIL CLASS DIAGRAM:**
+```
+        ┌──────────────────────┐
+        │   <<abstract>>       │
+        │      Produk          │
+        ├──────────────────────┤
+        │ - id: String         │
+        │ - nama: String       │
+        │ - harga: double      │
+        │ - stok: int          │
+        ├──────────────────────┤
+        │ + getHarga(): double │
+        │ + kurangiStok(): void│
+        └──────────△───────────┘
+                   │
+          ┌────────┴────────┐
+          │                 │
+ ┌────────┴────────┐  ┌────┴──────────┐
+ │   Elektronik    │  │    Pakaian    │
+ ├─────────────────┤  ├───────────────┤
+ │ - garansi: int  │  │ - ukuran: Str │
+ ├─────────────────┤  ├───────────────┤
+ │ + getGaransi()  │  │ + getUkuran() │
+ └─────────────────┘  └───────────────┘
+
+
+ ┌──────────────┐         ┌─────────────────┐
+ │   Customer   │ 1    0..*│    Pesanan      │
+ ├──────────────┤◇─────────├─────────────────┤
+ │ - id         │  membuat │ - noPesanan     │
+ │ - nama       │          │ - tanggal       │
+ │ - email      │          │ - status        │
+ ├──────────────┤          ├─────────────────┤
+ │ + buatPesanan│          │ + hitungTotal() │
+ └──────────────┘          └────────┬────────┘
+                                    │ 1
+                                    │ berisi
+                                    │
+                               ┌────┴──────────┐
+                               │ ItemPesanan   │ *
+                               ├───────────────┤◇───┐
+                               │ - jumlah: int │    │
+                               │ - subtotal    │    │
+                               ├───────────────┤    │ 1
+                               │+ hitungSubtot │    │
+                               └───────────────┘    │
+                                                    │
+                                             ┌──────▽──────┐
+                                             │   Produk    │
+                                             └─────────────┘
+```
+
+#### 🎯 STUDY CASE 4: Sistem Parkir
+
+**📝 Study Case:**
+```
+Sistem parkir untuk kendaraan. Kendaraan bisa motor atau mobil.
+Motor bayar Rp2000/jam, Mobil Rp5000/jam. Setiap kendaraan 
+punya plat nomor dan waktu masuk. Parkir punya kapasitas 
+maksimal dan bisa cek ketersediaan tempat.
+```
+
+**🔍 Analisis & Class Diagram:**
+```
+          ┌──────────────────┐
+          │  <<abstract>>    │
+          │   Kendaraan      │
+          ├──────────────────┤
+          │ # platNomor: Str │
+          │ # waktuMasuk: Dt │
+          ├──────────────────┤
+          │ + hitungBiaya()  │ ← abstract method
+          │ + getPlat()      │
+          └────────△─────────┘
+                   │
+          ┌────────┴────────┐
+          │                 │
+  ┌───────┴──────┐  ┌──────┴────────┐
+  │    Motor     │  │     Mobil     │
+  ├──────────────┤  ├───────────────┤
+  │ - TARIF=2000 │  │ - TARIF=5000  │
+  ├──────────────┤  ├───────────────┤
+  │ +hitungBiaya│  │ +hitungBiaya  │
+  └──────────────┘  └───────────────┘
+
+
+  ┌────────────────────┐
+  │      Parkir        │
+  ├────────────────────┤
+  │ - kapasitas: int   │
+  │ - terisi: int      │
+  ├────────────────────┤
+  │ + masukKendaraan() │
+  │ + keluarKendaraan()│
+  │ + cekKetersediaan()│
+  └──────────┬─────────┘
+             │ 1
+             │ mengelola
+             │
+             │ 0..*
+             ▽
+       ┌────────────┐
+       │ Kendaraan  │
+       └────────────┘
+```
+
+### 2.3 TEKNIK TRANSLATE STUDY CASE - CHECKLIST
+
+#### 📋 Checklist Langkah-langkah:
+
+**✅ 1. Baca Study Case dengan Teliti**
+- Highlight kata-kata penting
+- Identifikasi entitas utama
+- Cari hubungan antar entitas
+
+**✅ 2. Identifikasi Noun (Kata Benda) → CLASS**
+```
+Kata benda = Class kandidat
+Contoh: mahasiswa, buku, dosen, mobil, pesanan
+```
+
+**✅ 3. Identifikasi Adjective (Kata Sifat) → ATTRIBUTE**
+```
+Kata sifat/properti = Atribut
+Contoh: nama, warna, harga, jumlah, status
+```
+
+**✅ 4. Identifikasi Verb (Kata Kerja) → METHOD**
+```
+Kata kerja = Method
+Contoh: membeli, mengajar, menghitung, menyimpan
+```
+
+**✅ 5. Identifikasi Relationship (Hubungan)**
+```
+Kata hubungan:
+- "memiliki" → Association/Aggregation
+- "terdiri dari" → Composition
+- "adalah" → Inheritance
+- "dapat" → Method
+```
+
+**✅ 6. Tentukan Multiplicity**
+```
+Kata petunjuk:
+- "satu" → 1
+- "banyak/beberapa" → *
+- "minimal/maksimal" → range (1..*, 2..5)
+```
+
+#### 🎯 STUDY CASE 5: Sistem Rumah Sakit
+
+**📝 Study Case:**
+```
+Rumah sakit memiliki dokter dan pasien. Dokter memiliki 
+spesialisasi. Pasien bisa berobat jalan atau rawat inap.
+Setiap kunjungan pasien dicatat dengan diagnosa dan resep obat.
+Dokter bisa menangani banyak pasien. Pasien bisa ditangani 
+banyak dokter. Kamar rawat inap memiliki nomor, tipe (VIP, 
+kelas 1, kelas 2), dan tarif per hari.
+```
+
+**🔍 Analisis Lengkap:**
+
+**STEP 1: Identifikasi Class (Noun)**
+```
+✓ RumahSakit
+✓ Dokter
+✓ Pasien
+✓ PasienRawatJalan (subclass Pasien)
+✓ PasienRawatInap (subclass Pasien)
+✓ Kunjungan
+✓ Kamar
+```
+
+**STEP 2: Identifikasi Atribut**
+```
+Dokter:
+- id, nama, spesialisasi, noTelepon
+
+Pasien (parent):
+- id, nama, alamat, tanggalLahir
+
+PasienRawatInap (child):
+- tanggalMasuk, tanggalKeluar
+
+Kunjungan:
+- tanggal, diagnosa, resep
+
+Kamar:
+- nomor, tipe, tarifPerHari, status (tersedia/terisi)
+```
+
+**STEP 3: Identifikasi Method**
+```
+Dokter:
++ menanganiPasien()
++ getSpesialisasi()
+
+Pasien:
++ daftar()
++ getInfo()
+
+PasienRawatInap:
++ hitungBiayaKamar()
+
+Kunjungan:
++ tambahDiagnosa()
++ tambahResep()
+```
+
+**STEP 4: Identifikasi Relasi & Multiplicity**
+```
+- Dokter MENANGANI Pasien (* → *)
+  → Many-to-Many → butuh class Kunjungan sebagai penghubung
+  
+- Dokter HAS-MANY Kunjungan (1 → 0..*)
+- Pasien HAS-MANY Kunjungan (1 → 0..*)
+- PasienRawatInap MENEMPATI Kamar (* → 1)
+- PasienRawatJalan IS-A Pasien (inheritance)
+- PasienRawatInap IS-A Pasien (inheritance)
+```
+
+**✅ HASIL CLASS DIAGRAM:**
+```
+                    ┌──────────────────┐
+                    │     Pasien       │
+                    ├──────────────────┤
+                    │ - id: String     │
+                    │ - nama: String   │
+                    │ - alamat: String │
+                    ├──────────────────┤
+                    │ + daftar()       │
+                    │ + getInfo()      │
+                    └────────△─────────┘
+                             │
+                    ┌────────┴────────┐
+                    │                 │
+        ┌───────────┴────────┐  ┌────┴──────────────┐
+        │ PasienRawatJalan   │  │ PasienRawatInap   │
+        ├────────────────────┤  ├───────────────────┤
+        │                    │  │ - tglMasuk: Date  │
+        ├────────────────────┤  │ - tglKeluar: Date │
+        │ + getTagihan()     │  ├───────────────────┤
+        └────────────────────┘  │ + hitungBiaya()   │
+                                └─────────┬─────────┘
+                                          │ *
+                                          │ menempati
+                                          │
+                                          │ 1
+                                   ┌──────▽──────────┐
+                                   │     Kamar       │
+                                   ├─────────────────┤
+                                   │ - nomor: String │
+                                   │ - tipe: String  │
+                                   │ - tarif: double │
+                                   ├─────────────────┤
+                                   │ + getInfo()     │
+                                   └─────────────────┘
+
+┌──────────────┐         ┌──────────────┐         ┌──────────────┐
+│    Dokter    │ 1    *  │  Kunjungan   │  *   1  │    Pasien    │
+├──────────────┤◇────────├──────────────┤─────────├──────────────┤
+│ - id         │menangani│ - tanggal    │ditangani│              │
+│ - nama       │         │ - diagnosa   │         │              │
+│ - spesialis  │         │ - resep      │         │              │
+├──────────────┤         ├──────────────┤         │              │
+│ + menangani()│         │ + getInfo()  │         │              │
+└──────────────┘         └──────────────┘         └──────────────┘
+```
+
+#### 🎯 LATIHAN: Translate Study Case Sendiri
+
+**📝 LATIHAN 1: Bank**
+```
+Bank memiliki nasabah. Nasabah bisa membuka rekening tabungan
+atau deposito. Setiap rekening punya nomor rekening, saldo,
+dan pemilik. Tabungan bisa diambil kapan saja, deposito tidak
+bisa diambil sebelum jatuh tempo. Nasabah bisa transfer, tarik,
+dan setor uang.
+```
+
+**💡 Hint:**
+```
+Class: Bank, Nasabah, Rekening (abstract), Tabungan, Deposito
+Relasi: Inheritance (Tabungan/Deposito → Rekening)
+        Association (Nasabah ←→ Rekening)
+```
+
+**📝 LATIHAN 2: Rental Mobil**
+```
+Perusahaan rental mobil menyewakan berbagai jenis mobil (sedan,
+SUV, MPV). Setiap mobil punya plat nomor, warna, dan tarif sewa
+per hari. Customer bisa menyewa mobil dengan mencatat tanggal
+sewa dan tanggal kembali. Hitung total biaya berdasarkan durasi
+dan tarif mobil.
+```
+
+**💡 Hint:**
+```
+Class: RentalMobil, Mobil (parent), Sedan, SUV, MPV, Customer, Transaksi
+Relasi: Inheritance, Association
+Method: hitungBiaya() di Transaksi
+```
+
+### 2.4 TIPS MENGGAMBAR CLASS DIAGRAM
+
+**✅ DO'S:**
+1. **Nama Class:** PascalCase, singular (Mahasiswa, bukan Mahasiswas)
+2. **Nama Atribut:** camelCase (namaMahasiswa, tanggalLahir)
+3. **Nama Method:** camelCase + kata kerja (hitungGaji, setNama)
+4. **Tipe Data:** Tulis tipe dengan jelas (String, int, double, Date)
+5. **Constructor:** Sama dengan nama class
+6. **Getter/Setter:** Tulis jika penting untuk diagram
+7. **Abstract:** Gunakan italic atau <<abstract>>
+8. **Interface:** Gunakan <<interface>>
+
+**❌ DON'T:**
+1. Jangan terlalu detail (tidak perlu semua getter/setter)
+2. Jangan lupa visibility modifier
+3. Jangan salah relasi (composition vs aggregation)
+4. Jangan lupa multiplicity
+5. Jangan buat class yang tidak perlu
+
+**🎨 Tools untuk Menggambar:**
+- **Online:** draw.io, Lucidchart, PlantUML
+- **Desktop:** StarUML, Visual Paradigm, ArgoUML
+- **Code-based:** PlantUML (pakai text)
+
+### 2.5 CHEAT SHEET RELASI
+
+```
+INHERITANCE (Generalization)
+  │
+  △     Anak IS-A Parent
+  │     Contoh: Mobil is a Kendaraan
+  
+REALIZATION (Interface)
+  ┆
+  △     Class implements Interface
+  ┆     Contoh: Lingkaran implements Drawable
+
+ASSOCIATION
+  ────►  Class uses/has Class
+         Contoh: Mahasiswa ambil MataKuliah
+         
+AGGREGATION (weak has-a)
+  ◇───►  Has-a relationship, tapi bisa exist sendiri
+         Contoh: Kelas has Students (student bisa pindah kelas)
+
+COMPOSITION (strong has-a)
+  ◆───►  Has-a relationship, tidak bisa exist tanpa parent
+         Contoh: Rumah has Kamar (kamar tidak exist tanpa rumah)
+
+DEPENDENCY
+  ┄┄┄►  Class uses Class temporarily
+         Contoh: Class A use Class B as parameter
+```
+
+**Contoh Kasus Relasi:**
+
+```
+INHERITANCE:
+  Animal ← Dog, Cat
+  Kendaraan ← Motor, Mobil
+  Pegawai ← Manager, Staff
+
+AGGREGATION:
+  Universitas ◇──► Mahasiswa (mahasiswa bisa pindah kampus)
+  Perusahaan ◇──► Karyawan (karyawan bisa resign)
+
+COMPOSITION:
+  Rumah ◆──► Kamar (kamar hancur jika rumah hancur)
+  Mobil ◆──► Mesin (mesin tidak berguna tanpa mobil)
+  
+ASSOCIATION:
+  Dokter ──► Pasien
+  Mahasiswa ──► MataKuliah
+  Customer ──► Produk
+```
 
 #### Association (Asosiasi)
 ```
